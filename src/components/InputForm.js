@@ -42,9 +42,9 @@ export const InputForm = ({ inputEl }) => {
         // choiceNum = 0
         let adding = `${
           questionNum !== 1 ? '},' : ''
-        }{detailInfo:'(${questionNum})',questionSentence:'${
+        }{detailInfo:'(${questionNum})',questionImg:[],questionSentence:'${
           sentence.split(/^[0-9]*\./)[1]
-        }',
+        }',answerImg:[],answer:"",commentary:"",
           choices:[`
         console.log('[0-9].を検出：' + adding)
         newPreview.push(adding)
