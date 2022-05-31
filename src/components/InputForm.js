@@ -50,7 +50,7 @@ export const InputForm = ({ inputEl }) => {
         newPreview.push(adding)
       } else {
         // choiceNum++
-        let adding = sentence.replace('○', '') + ','
+        let adding = `'${sentence.replace('○', '')}',`
         console.log('選択肢を検出:' + adding)
         newPreview.push(adding)
       }
