@@ -1,4 +1,4 @@
-import { Text, Textarea } from '@chakra-ui/react'
+import { Button, Text, Textarea } from '@chakra-ui/react'
 import React, { useState } from 'react'
 export const InputForm = ({ inputEl }) => {
   const [inputInfo, setInputInfo] = useState({
@@ -78,12 +78,31 @@ export const InputForm = ({ inputEl }) => {
       length: inputEl.current.value.replace(/\s+/g, '').length,
     })
   }
+  const copyTextToClipboard = (array) => {
+    let text = ''
+    array.forEach((pre) => {
+      console.log(pre)
+      text = text + pre
+    })
+    navigator.clipboard.writeText(text).then(
+      function () {
+        console.log('Async: Copying to clipboard was successful!')
+      },
+      function (err) {
+        console.error('Async: Could not copy text: ', err)
+      },
+    )
+    console.log(text)
+  }
   return (
     <>
+      <Button colorScheme={'blue'} onClick={() => copyTextToClipboard(preview)}>
+        COPY
+      </Button>
       {preview !== [] ? (
         <>
           {preview.map((value, i) => (
-            <Text mb="8px" size={'sm'} key={i}>
+            <Text mb="8px" size={'sm'} key={i} className="copiedTxt">
               {value}
             </Text>
           ))}
