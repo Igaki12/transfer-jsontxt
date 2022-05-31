@@ -41,7 +41,7 @@ export const InputForm = ({ inputEl }) => {
         questionNum++
         // choiceNum = 0
         let adding = `${
-          questionNum !== 1 ? '},' : ''
+          questionNum !== 1 ? ']},' : ''
         }{detailInfo:'(${questionNum})',questionImg:[],questionSentence:'${
           sentence.split(/^[0-9]*\./)[1]
         }',answerImg:[],answer:"",commentary:"",
