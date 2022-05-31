@@ -8,6 +8,7 @@ export const InputForm = ({ inputEl }) => {
   const [preview, setPreview] = useState([])
 
   const countInputTxt = () => {
+    // setPreview([])
     console.log(inputEl.current.value)
     // let spaceCut = inputEl.current.value.split(' ').join('')
     // preview = [inputEl.current.value.split(/\n/g)]
@@ -29,33 +30,36 @@ export const InputForm = ({ inputEl }) => {
       if (sentence.match(/^[0-9]*\./)) {
         questionNum++
         // choiceNum = 0
-        if (sentence.indexOf('questionSentence:') === -1) {
-          sentence = `{\ndetailInfo:'(${questionNum})',\nquestionSentence:'${
-            sentence.split(/^[0-9]*\./)[1]
-          }'
+        let adding = `${
+          questionNum !== 1 ? '},' : ''
+        }{\ndetailInfo:'(${questionNum})',\nquestionSentence:'${
+          sentence.split(/^[0-9]*\./)[1]
+        }'
           choices:[`
-        }
-        console.log('[0-9].を検出：' + sentence)
+        setPreview([...preview, adding])
+        console.log('[0-9].を検出：' + adding)
         console.log(sentence.split(/^[0-9]*\./)[0])
       } else {
         // choiceNum++
-        sentence = `choices:[`
+        let adding = `${sentence.replace('○', '')},`
+        console.log("選択肢を検出:" + adding)
+        setPreview([...preview, adding])
       }
     })
-    setPreview(
-      sentences,
-      // inputEl.current.value
-      //   .split(/\n\s+/g)
-      //   .filter(
-      //     (row) =>
-      //       row !== '' &&
-      //       row !== '  ' &&
-      //       row.indexOf(
-      //         'このフォームを送信すると、 所有者に名前とメールアドレスが表示されます。',
-      //       ) === -1 &&
-      //       row.indexOf('送信') === -1,
-      //   ),
-    )
+    setPreview([...preview, '},'])
+    // setPreview(
+    // inputEl.current.value
+    //   .split(/\n\s+/g)
+    //   .filter(
+    //     (row) =>
+    //       row !== '' &&
+    //       row !== '  ' &&
+    //       row.indexOf(
+    //         'このフォームを送信すると、 所有者に名前とメールアドレスが表示されます。',
+    //       ) === -1 &&
+    //       row.indexOf('送信') === -1,
+    //   ),
+    // )
     console.log(preview)
 
     setInputInfo({
@@ -65,7 +69,7 @@ export const InputForm = ({ inputEl }) => {
   }
   return (
     <>
-      {preview ? (
+      {preview !== [] ? (
         <>
           {preview.map((value, i) => (
             <Text mb="8px" size={'sm'} key={i}>
