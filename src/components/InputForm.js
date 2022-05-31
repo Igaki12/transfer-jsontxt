@@ -8,20 +8,20 @@ export const InputForm = ({ inputEl }) => {
   const [preview, setPreview] = useState([])
 
   const countInputTxt = () => {
-    // setPreview([])
     console.log(inputEl.current.value)
-    // let spaceCut = inputEl.current.value.split(' ').join('')
-    // preview = [inputEl.current.value.split(/\n/g)]
-    let sentences = inputEl.current.value.split(/\n\s+/g).filter(
-      (row) => row !== '' && row !== '  ',
-      // row.indexOf(
-      //   'このフォームを送信すると、 所有者に名前とメールアドレスが表示されます。',
-      // ) === -1 &&
-      // row.indexOf('送信') === -1,
-    )
+
+    let sentences = inputEl.current.value
+      .split(/\n\s+/g)
+      .filter((row) => row !== '' && row !== '  ')
     let startIndex = sentences.findIndex(
       (sentence) =>
         sentence.indexOf('所有者に名前とメールアドレスが表示されます。') !== -1,
+    )
+    if (startIndex !== -1) {
+      sentences.splice(0, startIndex + 1)
+    }
+    startIndex = sentences.findIndex(
+      (sentence) => sentence.indexOf('*必須') !== -1,
     )
     if (startIndex !== -1) {
       sentences.splice(0, startIndex + 1)
@@ -94,6 +94,7 @@ export const InputForm = ({ inputEl }) => {
     )
     console.log(text)
   }
+  // あとは*必須と改行などのタイプコンフィグ
   return (
     <>
       <Button colorScheme={'blue'} onClick={() => copyTextToClipboard(preview)}>
