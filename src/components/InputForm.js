@@ -1,6 +1,7 @@
-import { Button, Text, Textarea } from '@chakra-ui/react'
+import { Button, Text, Textarea, useToast } from '@chakra-ui/react'
 import React, { useState } from 'react'
 export const InputForm = ({ inputEl }) => {
+  const toast = useToast()
   const [inputInfo, setInputInfo] = useState({
     row: 0,
     length: 0,
@@ -97,7 +98,19 @@ export const InputForm = ({ inputEl }) => {
   // あとは*必須と改行などのタイプコンフィグ
   return (
     <>
-      <Button colorScheme={'blue'} onClick={() => copyTextToClipboard(preview)}>
+      <Button
+        colorScheme={'blue'}
+        onClick={() => {
+          copyTextToClipboard(preview)
+          toast({
+            title: 'Successfully copied!',
+            position: 'bottom-left',
+            status: 'success',
+            duration: 9000,
+            isClosable: true,
+          })
+        }}
+      >
         COPY
       </Button>
       {preview !== [] ? (
