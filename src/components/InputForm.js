@@ -1,85 +1,22 @@
 import { Button, Text, Textarea, useToast } from '@chakra-ui/react'
 import React, { useState } from 'react'
-export const InputForm = ({ inputEl }) => {
+export const InputForm = ({
+  inputEl,
+  showSetting,
+  showPreview,
+  createPreview,
+}) => {
   const toast = useToast()
+  const setting = showSetting()
+  const preview = showPreview()
   const [inputInfo, setInputInfo] = useState({
     row: 0,
     length: 0,
   })
-  const [preview, setPreview] = useState([])
 
-  const countInputTxt = () => {
-    console.log(inputEl.current.value)
-
-    let sentences = inputEl.current.value
-      .split(/\n\s+/g)
-      .filter((row) => row !== '' && row !== '  ')
-    let startIndex = sentences.findIndex(
-      (sentence) =>
-        sentence.indexOf('所有者に名前とメールアドレスが表示されます。') !== -1,
-    )
-    if (startIndex !== -1) {
-      sentences.splice(0, startIndex + 1)
-    }
-    startIndex = sentences.findIndex(
-      (sentence) => sentence.indexOf('*必須') !== -1,
-    )
-    if (startIndex !== -1) {
-      sentences.splice(0, startIndex + 1)
-    }
-    let endIndex = sentences.findIndex((sentence) =>
-      sentence.trim().match('送信'),
-    )
-    if (endIndex !== -1) {
-      sentences = sentences.splice(0, endIndex)
-    }
-    console.log('端をtrim:' + startIndex + ',' + endIndex)
-    let questionNum = 0
-    let newPreview = []
-    sentences.forEach((sentence) => {
-      console.log('チェック開始：' + sentence)
-      if (sentence.match(/^[0-9]*\./)) {
-        questionNum++
-        // choiceNum = 0
-        let adding = `${
-          questionNum !== 1 ? ']},' : ''
-        }{detailInfo:'(${questionNum})',questionImg:[],questionSentence:'${
-          sentence.split(/^[0-9]*\./)[1]
-        }',answerImg:[],answer:"",commentary:"",
-          choices:[`
-        console.log('[0-9].を検出：' + adding)
-        newPreview.push(adding)
-      } else {
-        // choiceNum++
-        let adding = `'${sentence.replace('○', '')}',`
-        console.log('選択肢を検出:' + adding)
-        newPreview.push(adding)
-      }
-    })
-    console.log(newPreview)
-    newPreview.push(']},')
-    setPreview([newPreview])
-    // setPreview(
-    // inputEl.current.value
-    //   .split(/\n\s+/g)
-    //   .filter(
-    //     (row) =>
-    //       row !== '' &&
-    //       row !== '  ' &&
-    //       row.indexOf(
-    //         'このフォームを送信すると、 所有者に名前とメールアドレスが表示されます。',
-    //       ) === -1 &&
-    //       row.indexOf('送信') === -1,
-    //   ),
-    // )
-    console.log(preview)
-
-    setInputInfo({
-      row: inputEl.current.value.split(/\n/g).length,
-      length: inputEl.current.value.replace(/\s+/g, '').length,
-    })
-  }
   const copyTextToClipboard = (array) => {
+    console.log(array)
+    array = array.flat()
     let text = ''
     array.forEach((pre) => {
       console.log(pre)
@@ -105,6 +42,7 @@ export const InputForm = ({ inputEl }) => {
           toast({
             title: 'Successfully copied!',
             position: 'bottom-left',
+            description: preview,
             status: 'success',
             duration: 9000,
             isClosable: true,
@@ -128,8 +66,20 @@ export const InputForm = ({ inputEl }) => {
       )}
       <Textarea
         ref={inputEl}
-        onChange={countInputTxt}
-        onBlur={countInputTxt}
+        onChange={() => {
+          createPreview(setting, inputEl)
+          setInputInfo({
+            row: inputEl.current.value.split(/\n/g).length,
+            length: inputEl.current.value.replace(/\s+/g, '').length,
+          })
+        }}
+        onBlur={() => {
+          createPreview(setting, inputEl)
+          setInputInfo({
+            row: inputEl.current.value.split(/\n/g).length,
+            length: inputEl.current.value.replace(/\s+/g, '').length,
+          })
+        }}
         placeholder="ここにスキャンした文字列を貼り付け"
       ></Textarea>
       <Text>

@@ -2,17 +2,30 @@ import { useState } from 'react'
 
 export const useSetting = () => {
   const [setting, setSetting] = useState({
-    newLine: /\n\s+/g,
+    questionType: 'forms',
+    newLine: /\n/g,
     questionStart: /^[0-9]*\./,
     choiceStart: '',
   })
   const showSetting = () => {
     return setting
   }
-  const setNewLine = (string) => {
+  const setQuestionType = (type) => {
     let newSetting = setting
-    newSetting.newLine = string
+    newSetting.questionType = type
     setSetting(newSetting)
+  }
+  const setNewLine = (strNum) => {
+    let newSetting = setting
+    if (strNum === 2) {
+      newSetting.newLine = /\n\s+/g
+    } else if (strNum === 3) {
+      newSetting.newLine = /\s+/g
+    } else {
+      newSetting.newLine = /\n/g
+    }
+    setSetting(newSetting)
+    console.log('setNewLine:' + newSetting.newLine)
   }
   const setQuestionStart = (string) => {
     let newSetting = setting
@@ -29,5 +42,6 @@ export const useSetting = () => {
     setNewLine,
     setQuestionStart,
     setChoiceStart,
+    setQuestionType,
   }
 }

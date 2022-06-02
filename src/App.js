@@ -4,18 +4,32 @@ import React, { useRef } from 'react'
 import { InputForm } from './components/InputForm'
 import { Settings } from './components/Settings'
 import { useSetting } from './hooks/useSetting'
+import { usePreview } from './hooks/usePreview'
 function App() {
   const inputEl = useRef('ここに入力した文字列が表示されます')
   const {
     showSetting,
+    setQuestionType,
     setNewLine,
     setQuestionStart,
     setChoiceStart,
   } = useSetting()
+  const { showPreview, createPreview } = usePreview()
   return (
     <>
-      <InputForm inputEl={inputEl} showSetting={showSetting} />
-      <Settings setNewLine={setNewLine} />
+      <InputForm
+        inputEl={inputEl}
+        showSetting={showSetting}
+        showPreview={showPreview}
+        createPreview={createPreview}
+      />
+      <Settings
+      inputEl={inputEl}
+        showSetting={showSetting}
+        createPreview={createPreview}
+        setNewLine={setNewLine}
+        setQuestionType={setQuestionType}
+      />
     </>
   )
 }
