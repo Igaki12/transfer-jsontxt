@@ -16,7 +16,7 @@ export const InputForm = ({
 
   const copyTextToClipboard = (array) => {
     console.log(array)
-    array = array.flat()
+    // array = array.flat()
     let text = ''
     array.forEach((pre) => {
       console.log(pre)
