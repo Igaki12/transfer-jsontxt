@@ -50,6 +50,9 @@ export const usePreview = () => {
           console.log('解答部分を削除' + sentence)
         } else {
           if (questionNum === 0) {
+            // sentence.match(/（.+?）/g).forEach((ans) => {
+            //   answer += ans + ','
+            // })
             questionTxt += sentence
               .replace(/（.+?）/g, '(　)')
               .replace(/^\s*[0-9]+\./g, '')
@@ -72,20 +75,21 @@ export const usePreview = () => {
       newPreview.push(adding)
       setPreview(newPreview)
       console.log(newPreview)
-    } else {
+      // ここからMSForm時の回路
+    } else if (setting.questionType === 'forms') {
       console.log('setMSFormsPreview:' + inputEl.current.value)
 
       let questionNum = 0
       let newPreview = []
       sentences.forEach((sentence) => {
         console.log('チェック開始：' + sentence)
-        if (sentence.match(/^\s*[0-9]+\./)) {
+        if (sentence.match(/^\s*[0-9]+\./g)) {
           questionNum++
           // choiceNum = 0
           let adding = `${
             questionNum !== 1 ? ']},' : ''
           }{detailInfo:"(${questionNum})",questionImg:[],questionSentence:"${
-            sentence.split(/^\s*[0-9]+\./)[1]
+            sentence.split(/^\s*[0-9]+\./g)[1]
           }",answerImg:[],answer:"",commentary:"",
             choices:[`
           console.log('[0-9].を検出：' + adding)
