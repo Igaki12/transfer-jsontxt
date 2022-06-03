@@ -23,6 +23,7 @@ function App() {
         createPreview={createPreview}
         setNewLine={setNewLine}
         setQuestionType={setQuestionType}
+        setQuestionStart={setQuestionStart}
       />
       <InputForm
         inputEl={inputEl}

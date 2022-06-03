@@ -19,6 +19,7 @@ export const Settings = ({
   setQuestionType,
   showSetting,
   createPreview,
+  setQuestionStart,
 }) => {
   const { isOpen, onToggle } = useDisclosure()
   const inputNewLine = useRef()
@@ -149,11 +150,17 @@ export const Settings = ({
           <Text size={'xs'} maxW="180px">
             questionSentence:
             <Input
-              placeholder="例) [1-9]\."
-              width={'80px'}
+              placeholder="例) ^\s*[1-9]\."
+              width={'100px'}
               size="xs"
               variant="outline"
-              onChange={() => checkForm(inputQuestionStart.current.value)}
+              onChange={() => {
+                checkForm(inputQuestionStart.current.value)
+              }}
+              onBlur={() => {
+                setQuestionStart(inputQuestionStart.current.value)
+                setInfoTxt('questionSentenceの前区切り文字を変更しました。')
+              }}
               ref={inputQuestionStart}
             />
             <Code>Aortaの...</Code>

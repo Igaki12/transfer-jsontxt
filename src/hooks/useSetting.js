@@ -29,7 +29,8 @@ export const useSetting = () => {
   }
   const setQuestionStart = (string) => {
     let newSetting = setting
-    newSetting.questionStart = string
+    setSetting('test')
+    newSetting.questionStart = new RegExp(string, 'g')
     setSetting(newSetting)
   }
   const setChoiceStart = (string) => {
