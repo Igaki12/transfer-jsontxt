@@ -17,18 +17,18 @@ function App() {
   const { showPreview, createPreview } = usePreview()
   return (
     <>
+      <Settings
+        inputEl={inputEl}
+        showSetting={showSetting}
+        createPreview={createPreview}
+        setNewLine={setNewLine}
+        setQuestionType={setQuestionType}
+      />
       <InputForm
         inputEl={inputEl}
         showSetting={showSetting}
         showPreview={showPreview}
         createPreview={createPreview}
-      />
-      <Settings
-      inputEl={inputEl}
-        showSetting={showSetting}
-        createPreview={createPreview}
-        setNewLine={setNewLine}
-        setQuestionType={setQuestionType}
       />
     </>
   )

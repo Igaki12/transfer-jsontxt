@@ -56,7 +56,7 @@ export const usePreview = () => {
             questionNum++
             return
           }
-          let adding = `{detailInfo:"${questionNum}",questionImg:[],questionSentence:"${questionTxt}",answerImg:[],answer:"${answer}",commentary:"",}`
+          let adding = `{detailInfo:"${questionNum}",questionImg:[],questionSentence:"${questionTxt}",answerImg:[],answer:"${answer}",commentary:"",},`
           console.log('adding:' + adding)
           newPreview.push(adding)
           answer = ''
@@ -67,10 +67,9 @@ export const usePreview = () => {
           questionNum = sentence.match(/^\s*[0-9]+\./g)
         }
       })
-      let adding = `{detailInfo:"${questionNum}",questionImg:[],questionSentence:"${questionTxt}",answerImg:[],answer:"${answer}",commentary:"",}`
+      let adding = `{detailInfo:"${questionNum}",questionImg:[],questionSentence:"${questionTxt}",answerImg:[],answer:"${answer}",commentary:"",},`
       console.log('adding:' + adding)
       newPreview.push(adding)
-      newPreview.push('},')
       setPreview(newPreview)
       console.log(newPreview)
     } else {
