@@ -45,7 +45,7 @@ export const usePreview = () => {
       // synthesizedTxt.split(/^\s*[0-9]*\./)
       sentences.forEach((sentence) => {
         if (sentence.match(setting.questionStart) === null) {
-          questionTxt += sentence.replace(/（.+?）/g, '(　)')
+          questionTxt += sentence.replace(setting.brackets, '(　)')
           // sentence = sentence.replace(/（.+?）/g, '()')
           console.log('解答部分を削除' + sentence)
         } else {
@@ -54,7 +54,7 @@ export const usePreview = () => {
             //   answer += ans + ','
             // })
             questionTxt += sentence
-              .replace(/（.+?）/g, '(　)')
+              .replace(setting.brackets, '(　)')
               .replace(setting.questionStart, '')
             questionNum++
             return
@@ -65,7 +65,7 @@ export const usePreview = () => {
           answer = ''
           questionTxt = ''
           questionTxt += sentence
-            .replace(/（.+?）/g, '(　)')
+            .replace(setting.brackets, '(　)')
             .replace(setting.questionStart, '')
           questionNum = sentence.match(setting.questionStart)
         }

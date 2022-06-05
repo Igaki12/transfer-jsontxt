@@ -11,6 +11,7 @@ import {
   Button,
   Collapse,
   Code,
+  Tooltip,
 } from '@chakra-ui/react'
 import React, { useRef, useState } from 'react'
 export const Settings = ({
@@ -20,6 +21,7 @@ export const Settings = ({
   showSetting,
   createPreview,
   setQuestionStart,
+  setBrackets,
 }) => {
   const { isOpen, onToggle } = useDisclosure()
   const inputNewLine = useRef()
@@ -29,6 +31,7 @@ export const Settings = ({
   const inputChoiceEnd = useRef()
   const inputQuestionEnd = useRef()
   const inputQuestionStart = useRef()
+  const inputBrackets = useRef()
   const [infoTxt, setInfoTxt] = useState()
   const setting = showSetting()
   let nl = `'${setting.newLine}'次第`
@@ -75,6 +78,24 @@ export const Settings = ({
           >
             穴埋め問題
           </Radio>
+          <Tooltip
+            hasArrow
+            label="穴埋めによってreplaceされる文字列の正規表現を記入"
+            size={'xs'}
+          >
+            <Input
+              placeholder="例) （.+?）"
+              width={'140px'}
+              size="sm"
+              variant="filled"
+              onChange={() => {
+                checkForm(inputBrackets.current.value)
+              }}
+              onBlur={() => setBrackets(inputBrackets.current.value0)}
+              ref={inputBrackets}
+            />
+          </Tooltip>
+
           <Radio
             value="3"
             onChange={() => {
@@ -189,7 +210,7 @@ export const Settings = ({
           </Text>
           <Text size={'xs'}>answerImg:[],</Text>
           <Text size={'xs'}>
-            answer:{' '}
+            answer:''
             <Input
               placeholder="例) A."
               width={'80px'}

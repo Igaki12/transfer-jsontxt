@@ -4,8 +4,9 @@ export const useSetting = () => {
   const [setting, setSetting] = useState({
     questionType: 'forms',
     newLine: /\n/g,
-    questionStart: /^[0-9]*\./,
+    questionStart: /^[0-9]*\./g,
     choiceStart: '',
+    brackets: /\(.+?\)/g,
   })
   const showSetting = () => {
     return setting
@@ -29,13 +30,27 @@ export const useSetting = () => {
   }
   const setQuestionStart = (string) => {
     let newSetting = setting
-    setSetting('test')
-    newSetting.questionStart = new RegExp(string, 'g')
+    if (string) {
+      newSetting.questionStart = new RegExp(string, 'g')
+    } else {
+      newSetting.questionStart = /^[0-9]*\./g
+    }
+
     setSetting(newSetting)
   }
   const setChoiceStart = (string) => {
     let newSetting = setting
     newSetting.choiceStart = string
+    setSetting(newSetting)
+  }
+  const setBrackets = (string) => {
+    let newSetting = setting
+    if (string) {
+      newSetting.brackets = new RegExp(string, 'g')
+    } else {
+      newSetting.brackets = /\(.+?\)/g
+    }
+
     setSetting(newSetting)
   }
   return {
@@ -44,5 +59,6 @@ export const useSetting = () => {
     setQuestionStart,
     setChoiceStart,
     setQuestionType,
+    setBrackets,
   }
 }
