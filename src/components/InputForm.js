@@ -1,4 +1,4 @@
-import { Button, Text, Textarea, useToast } from '@chakra-ui/react'
+import { Button, Flex, Text, Textarea, useToast } from '@chakra-ui/react'
 import React, { useState } from 'react'
 export const InputForm = ({
   inputEl,
@@ -82,9 +82,24 @@ export const InputForm = ({
         }}
         placeholder="ここにスキャンした文字列を貼り付け"
       ></Textarea>
-      <Text>
+      <Flex>
         {inputInfo.row}行{inputInfo.length}文字
-      </Text>
+        <Button
+          onClick={() => {
+            toast({
+              title: 'フォーム内容がリセットされました',
+              // description: "We've created your account for you.",
+              status: 'info',
+              position: 'bottom-left',
+              duration: 9000,
+              isClosable: true,
+            })
+            inputEl.current.value = ''
+          }}
+        >
+          RESET
+        </Button>
+      </Flex>
     </>
   )
 }

@@ -12,6 +12,15 @@ import {
   Collapse,
   Code,
   Tooltip,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  ModalFooter,
+  Checkbox,
+  CheckboxGroup,
 } from '@chakra-ui/react'
 import React, { useRef, useState } from 'react'
 export const Settings = ({
@@ -21,9 +30,15 @@ export const Settings = ({
   showSetting,
   createPreview,
   setQuestionStart,
+  setQuestionEnd,
+  setChoiceStart,
+  setAnswerStart,
+  setAnswerEnd,
   setBrackets,
+  toggleCustomCheck,
 }) => {
   const { isOpen, onToggle } = useDisclosure()
+  const [customOpen, setCustomOpen] = useState(false)
   const inputNewLine = useRef()
   const inputAnswerEnd = useRef()
   const inputAnswerStart = useRef()
@@ -57,7 +72,12 @@ export const Settings = ({
       </Alert>
       <Text>問題の形式</Text>
       <RadioGroup>
-        <Stack direction="row" bgColor={'blue.100'} defaultValue="forms">
+        <Stack
+          direction="row"
+          bgColor={'blue.100'}
+          defaultValue="forms"
+          value={setting.questionType}
+        >
           <Radio
             value="1"
             onChange={() => {
@@ -99,15 +119,61 @@ export const Settings = ({
           <Radio
             value="3"
             onChange={() => {
-              setQuestionType('forms')
+              setCustomOpen(true)
+              setQuestionType('custom')
               createPreview(setting, inputEl)
               setInfoTxt('問題形式を変更しました：' + setting.questionType)
             }}
           >
-            準備中
+            カスタマイズ
           </Radio>
         </Stack>
       </RadioGroup>
+      <Modal isOpen={customOpen} onClose={() => setCustomOpen(false)}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>CUSTOM</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <CheckboxGroup defaultValue={['sentence']}>
+              <Stack spacing={2} direction="column">
+                <Checkbox
+                  value="sentence"
+                  onChange={() => toggleCustomCheck('sentence')}
+                  colorScheme="blue"
+                  isDisabled
+                >
+                  questionSentence
+                </Checkbox>
+                <Checkbox
+                  value="choices"
+                  onChange={() => toggleCustomCheck('choices')}
+                  colorScheme="blue"
+                >
+                  choices
+                </Checkbox>
+                <Checkbox
+                  value="answer"
+                  onChange={() => toggleCustomCheck('answer')}
+                  colorScheme="red"
+                >
+                  answer
+                </Checkbox>
+              </Stack>
+            </CheckboxGroup>
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              colorScheme="blue"
+              mr={3}
+              onClick={() => setCustomOpen(false)}
+            >
+              決定
+            </Button>
+            {/* <Button variant="ghost">Secondary Action</Button> */}
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
       <Text>改行の種類</Text>
       <RadioGroup>
         <Stack direction="row" bgColor={'blue.100'}>
@@ -180,7 +246,10 @@ export const Settings = ({
               }}
               onBlur={() => {
                 setQuestionStart(inputQuestionStart.current.value)
-                setInfoTxt('questionSentenceの前区切り文字を変更しました。')
+                setInfoTxt(
+                  'questionSentenceの前区切り文字を変更しました。' +
+                    setting.questionStart,
+                )
               }}
               ref={inputQuestionStart}
             />
@@ -190,7 +259,16 @@ export const Settings = ({
               width={'120px'}
               size="xs"
               variant="outline"
-              onChange={() => checkForm(inputQuestionEnd.current.value)}
+              onChange={() => {
+                checkForm(inputQuestionEnd.current.value)
+              }}
+              onBlur={() => {
+                setQuestionEnd(inputQuestionEnd.current.value)
+                setInfoTxt(
+                  'questionSentenceの後区切り文字を変更しました:' +
+                    setting.questionEnd,
+                )
+              }}
               ref={inputQuestionEnd}
             />
             ,
@@ -203,6 +281,12 @@ export const Settings = ({
               size="xs"
               variant="outline"
               onChange={() => checkForm(inputChoiceStart.current.value)}
+              onBlur={() => {
+                setChoiceStart(inputChoiceStart.current.value)
+                setInfoTxt(
+                  'choicesの前区切り文字を変更しました:' + setting.choiceStart,
+                )
+              }}
               ref={inputChoiceStart}
             />
             <Code>選択肢１</Code>
@@ -217,6 +301,12 @@ export const Settings = ({
               size="xs"
               variant="outline"
               onChange={() => checkForm(inputAnswerStart.current.value)}
+              onBlur={() => {
+                setAnswerStart(inputAnswerStart.current.value)
+                setInfoTxt(
+                  'answerの前区切り文字を変更しました:' + setting.answerStart,
+                )
+              }}
               ref={inputAnswerStart}
             />
             <Code>洞様毛細...</Code>
@@ -226,6 +316,12 @@ export const Settings = ({
               size="xs"
               variant="outline"
               onChange={() => checkForm(inputAnswerEnd.current.value)}
+              onBlur={() => {
+                setAnswerEnd(inputAnswerEnd.current.value)
+                setInfoTxt(
+                  'answerの後区切り文字を変更しました:' + setting.answerEnd,
+                )
+              }}
               ref={inputAnswerEnd}
             />
             ,

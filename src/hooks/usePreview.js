@@ -105,6 +105,120 @@ export const usePreview = () => {
       newPreview.push(']},')
       setPreview(newPreview)
       console.log(preview)
+      // カスタマイズ
+    } else {
+      console.log('カスタマイズ開始:' + sentences)
+      let newPreview = []
+      let detailInfo = ''
+      let questionTxt = ''
+      let answer = ''
+      let choices = ''
+      let continueFlag = null
+      sentences.forEach((sentence, index) => {
+        if (continueFlag === 'question') {
+          if (setting.questionEnd && sentence.match(setting.questionEnd)) {
+          } else if (setting.customCheck.indexOf('choices') !== -1) {
+            if (setting.choiceStart) {
+              if (sentence.match(setting.choiceStart)) {
+              } else {
+                console.log('問題は次の行まで続きます')
+              }
+            }
+          } else if (setting.customCheck.indexOf('answer') !== -1) {
+            if (setting.answerStart) {
+              if (sentence.match(setting.answerStart)) {
+              } else {
+                console.log('問題は次の行まで続きます')
+              }
+            }
+          } else {
+            console.log(index + '問題は次の行まで続きます')
+          }
+        }
+        if (setting.questionStart && sentence.match(setting.questionStart)) {
+          detailInfo = sentence
+            .match(setting.questionStart)
+            .replace(/\.|．/g, '')
+          if (setting.questionEnd && sentence.match(setting.questionEnd)) {
+            questionTxt += sentence
+              .split(setting.questionStart)[1]
+              .split(setting.questionEnd)[0]
+            sentence = sentence.split(setting.questionEnd)[1]
+          } else if (
+            setting.choiceStart &&
+            sentence.match(setting.choiceStart)
+          ) {
+            questionTxt += sentence
+              .split(setting.questionStart)[1]
+              .split(setting.choiceStart)[0]
+            sentence = sentence.split(setting.choiceStart)[1]
+          } else if (
+            setting.answerStart &&
+            sentence.match(setting.answerStart)
+          ) {
+            questionTxt += sentence
+              .split(setting.questionStart)[1]
+              .split(setting.answerStart)[0]
+            sentence = sentence.split(setting.answerStart)[1]
+          } else if (sentence.match(setting.questionStart).length > 1) {
+            console.log(index + ':2文以上の質問を検出しています')
+            questionTxt += sentence.split(setting.questionStart)[1]
+            sentence = sentence.split(setting.questionStart, 1)[1]
+            sentences.push(sentence)
+          } else {
+            console.log(index + ':問題は次の行まで続いています')
+            questionTxt += sentence.split(setting.questionStart)[1]
+            return
+          }
+        }
+        if (
+          setting.customCheck.indexOf('choices') !== -1 &&
+          setting.choiceStart &&
+          sentence.match(setting.choiceStart)
+        ) {
+          if (sentence.match(setting.choiceStart).length > 1) {
+          } else if (
+            setting.answerStart &&
+            sentence.match(setting.answerStart)
+          ) {
+          } else if (
+            setting.questionStart &&
+            sentence.match(setting.questionStart)
+          ) {
+          } else {
+            console.log(index + ':選択肢は次の行まで続きます')
+          }
+        } else if (
+          setting.customCheck.indexOf('choices') !== -1 &&
+          sentence.length > 0
+        ) {
+          if (setting.questionStart && sentence.match(setting.questionStart)) {
+          } else {
+            console.log(index + '行の終わりで選択肢を区切りました。')
+          }
+        }
+        if (
+          setting.customCheck.indexOf('answer') !== -1 &&
+          setting.answerStart &&
+          sentence.match(setting.answerStart)
+        ) {
+          if (setting.answerEnd && sentence.match(setting.answerEnd)) {
+          } else if (
+            setting.questionStart &&
+            sentence.match(setting.questionStart)
+          ) {
+          } else if (setting.answerEnd || setting.questionStart) {
+            console.log(index + ':解答は次の行まで続きます')
+          } else {
+            console.log(index + ':行の終わりで解答を区切りました')
+          }
+        } else if (
+          setting.customCheck.indexOf('answer') &&
+          sentence.length > 0
+        ) {
+        }
+        console.log('前の行からの続き:' + sentence)
+      })
     }
   }
   return {

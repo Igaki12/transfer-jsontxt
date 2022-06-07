@@ -12,8 +12,10 @@ function App() {
     setQuestionType,
     setNewLine,
     setQuestionStart,
+    setQuestionEnd,
     setChoiceStart,
     setBrackets,
+    toggleCustomCheck,
   } = useSetting()
   const { showPreview, createPreview } = usePreview()
   return (
@@ -25,7 +27,9 @@ function App() {
         setNewLine={setNewLine}
         setQuestionType={setQuestionType}
         setQuestionStart={setQuestionStart}
+        setQuestionEnd={setQuestionEnd}
         setBrackets={setBrackets}
+        toggleCustomCheck={toggleCustomCheck}
       />
       <InputForm
         inputEl={inputEl}
