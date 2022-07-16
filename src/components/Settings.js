@@ -282,6 +282,7 @@ export const Settings = ({
               variant="outline"
               onChange={() => checkForm(inputChoiceStart.current.value)}
               onBlur={() => {
+                console.log(inputChoiceStart.current.value)
                 setChoiceStart(inputChoiceStart.current.value)
                 setInfoTxt(
                   'choicesの前区切り文字を変更しました:' + setting.choiceStart,

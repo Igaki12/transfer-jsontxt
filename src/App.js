@@ -28,6 +28,7 @@ function App() {
         setQuestionType={setQuestionType}
         setQuestionStart={setQuestionStart}
         setQuestionEnd={setQuestionEnd}
+        setChoiceStart={setChoiceStart}
         setBrackets={setBrackets}
         toggleCustomCheck={toggleCustomCheck}
       />

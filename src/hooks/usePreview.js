@@ -107,321 +107,275 @@ export const usePreview = () => {
       console.log(preview)
       // カスタマイズ 現状questionEnd&answerEndは未実装
     } else {
-      console.log('カスタマイズ開始:' + sentences)
-      let newPreview = []
-      let turn = 'question'
-      let detailInfo = ''
-      let questionTxt = ''
-      let choices = []
-      let c = ''
-      let answer = ''
-      sentences.forEach((sentence, index) => {
-        while (sentence !== '') {
-          console.log('ループ処理開始：' + sentence)
-          if (turn === 'question') {
-            if (setting.questionStart) {
-              if (sentence.match(setting.questionStart)) {
-                console.log(`問題文開始:${index}`)
-                console.log(
-                  'まとめる場所はここ？:' +
-                    detailInfo +
-                    ',questionTxt:' +
-                    questionTxt +
-                    'choices:' +
-                    choices +
-                    'answer:' +
-                    answer,
-                )
-                detailInfo = sentence.match(setting.questionStart)[0]
-                if (setting.customCheck.indexOf('choices') !== -1) {
-                  if (setting.choiceStart) {
-                    if (sentence.match(setting.choiceStart)) {
-                      questionTxt += sentence
-                        .split(setting.questionStart)[1]
-                        .split(setting.choiceStart)[0]
-                      sentence = sentence.split(setting.choiceStart)[1]
-                      turn = 'choices'
-                    } else {
-                      questionTxt += sentence.split(setting.questionStart)[1]
-                      sentence = ''
-                    }
-                  } else {
-                    questionTxt += sentence.split(setting.questionStart)[1]
-                    sentence = ''
-                    turn = 'choices'
-                  }
-                } else if (setting.customCheck.indexOf('answer') !== -1) {
-                  if (setting.answerStart) {
-                    if (sentence.match(setting.answerStart)) {
-                      questionTxt += sentence
-                        .split(setting.questionStart)[1]
-                        .split(setting.answerStart)[0]
-                      sentence = sentence.split(setting.answerStart)[1]
-                      turn = 'answer'
-                    } else {
-                      questionTxt += sentence.split(setting.questionStart)[1]
-                      sentence = ''
-                    }
-                  } else {
-                    questionTxt += sentence.split(setting.questionStart)[1]
-                    sentence = ''
-                    turn = 'answer'
-                  }
-                } else {
-                  questionTxt += sentence.split(setting.questionStart)[1]
-                  if (sentence.split(setting.questionStart).length > 2) {
-                    sentence = sentence.split(setting.questionStart)[2]
-                    turn = 'question'
-                  } else {
-                    sentence = ''
-                    turn = 'question'
-                  }
-                }
-              }
-            }
-            // if OR else if??
-          } else if (turn === 'choices') {
+      let splitter = sentences
+        .join('\n')
+        .match(new RegExp(setting.questionStart, 'g'))
+      let splittedAll = sentences
+        .join('\n')
+        .split(new RegExp(setting.questionStart, 'g'))
+        .reduce((prev, currentQuestion, QuestionIndex) => {
+          let newQuestion = { detailInfo: '', questionSentence: '', answer: '' }
+          if (splitter[QuestionIndex]) {
+            newQuestion.detailInfo = splitter[QuestionIndex]
+          } else {
+            newQuestion.detailInfo = '(' + QuestionIndex + ')'
+          }
+          if (setting.customCheck.indexOf('choices') !== -1) {
             if (setting.choiceStart) {
-              if (sentence.match(setting.choiceStart)) {
-                if (c) {
-                  choices.push(c)
-                  c = ''
-                }
-                if (sentence.split(setting.choiceStart).length > 2) {
-                  c += sentence.split(setting.choiceStart)[1]
-                  sentence = sentence.split(setting.choiceStart)[2]
-                } else if (setting.customCheck.indexOf('answer') !== -1) {
-                  if (setting.answerStart) {
-                    if (sentence.match(setting.answerStart)) {
-                      c += sentence
-                        .split(setting.choiceStart)[1]
-                        .split(setting.answerStart)[0]
-                      choices.push(c)
-                      c = ''
-                      sentence = sentence.split(setting.answerStart)[1]
-                      turn = 'answer'
-                    } else {
-                      c += sentence.split(setting.choiceStart)[1]
-                      sentence = ''
-                    }
-                  } else {
-                    // 文末で区切る
-                    c += sentence.split(setting.choiceStart)[1]
-                    choices.push(c)
-                    c = ''
-                  }
-                } else {
-                  // next is questionSentence
-                  if (setting.questionStart) {
-                    if (sentence.match(setting.questionStart)) {
-                      c += sentence
-                        .split(setting.choiceStart)[1]
-                        .split(setting.questionStart)[0]
-                      choices.push(c)
-                      c = ''
-                      sentence = sentence.split(setting.questionStart)[1]
-                      turn = 'question'
-                    } else {
-                      c += sentence.split(setting.choiceStart)[1]
-                      sentence = ''
-                    }
-                  }
-                }
-              } else {
-                if (setting.answerStart) {
-                  if (sentence.match(setting.answerStart)) {
-                    c += sentence.split(setting.answerStart)[0]
-                    choices.push(c)
-                    sentence = sentence.split(setting.answerStart)[1]
-                    turn = 'answer'
-                  } else {
-                    c += sentence.toString()
-                    sentence = ''
-                  }
-                } else {
-                  if (sentence.match(setting.questionStart)) {
-                    c += sentence.split(setting.questionStart)[0]
-                    choices.push(c)
-                    sentence = sentence.split(setting.questionStart)[1]
-                    turn = 'question'
-                  } else {
-                    c += sentence.toString()
-                    sentence = ''
-                  }
-                }
-              }
             } else {
-              // if choiceStart === undefined,choice is splitted by sentence
-              if (setting.customCheck.indexOf('answer') !== -1) {
-                if (setting.answerStart) {
-                  if (sentence.match(setting.answerStart)) {
-                    c += sentence.split(setting.answerStart)[0]
-                    choices.push(c)
-                    c = ''
-                    turn = 'answer'
-                  } else {
-                    c += sentence.toString()
-                    choices.push(c)
-                    c = ''
-                  }
-                } else {
-                  // choiceStartがなくてanswerStartもないことはあり得ない
-                }
-              } else {
-                if (setting.questionStart) {
-                  if (sentence.match(setting.questionStart)) {
-                    c += sentence.split(setting.questionStart)[0]
-                    choices.push(c)
-                    c = ''
-                    turn = 'question'
-                  } else {
-                    c += sentence.toString()
-                    choices.push(c)
-                    c = ''
-                  }
-                } else {
-                  // choiceStartがなくてquestionStartもないことはあり得ない
-                }
-              }
+              setting.choiceStart = '\n'
             }
-          } else if (turn === 'answer') {
-            if (setting.answerStart) {
-              if (sentence.match(setting.questionStart)) {
-                answer += sentence
-                  .split(setting.answerStart)[0]
-                  .split(setting.questionStart)[0]
-                sentence = sentence.split(setting.questionStart)[1]
-                turn = 'question'
-              } else {
-                answer += sentence.toString()
-                sentence = ''
-              }
+            if (setting.customCheck.indexOf('answer') !== -1) {
+              newQuestion.questionSentence = currentQuestion
+                .split(new RegExp(setting.choiceStart, 'g'))[0]
+                .replace('\n', '')
+              newQuestion.choices = currentQuestion
+                .split(new RegExp(setting.choiceStart, 'g'))
+                .map((choice, choiceIndex) => {
+                  if (
+                    choice.split(new RegExp(setting.answerStart, 'g')).length >
+                    1
+                  ) {
+                    newQuestion.answer = choice.split(
+                      new RegExp(setting.answerStart, 'g'),
+                    )[1]
+                    return choice
+                      .split(new RegExp(setting.answerStart))[0]
+                      .replace('\n', '')
+                  } else {
+                    return choice.replace('\n', '')
+                  }
+                })
             } else {
-              // 文頭からANSWERとして認識
-              if (setting.questionStart) {
-                if (sentence.match(setting.questionStart)) {
-                  answer += sentence.split(setting.questionStart)[0]
-                  sentence = sentence.split(setting.questionStart)[1]
-                  turn = 'question'
-                } else {
-                  answer += sentence.toString()
-                  sentence = ''
-                }
-              }
+              newQuestion.questionSentence = currentQuestion
+                .split(new RegExp(setting.choiceStart, 'g'))[0]
+                .replace('\n', '')
+              newQuestion.choices = currentQuestion
+                .split(new RegExp(setting.choiceStart, 'g'))
+                .slice(1)
+                .map((value) => value.replace('\n', ''))
             }
           }
-        }
-      })
+          return [...prev, newQuestion]
+        }, [])
+      console.log('全ての分割が完了:')
+      console.log(splittedAll)
+      setPreview(
+        splittedAll.reduce((prev, question) => {
+          return [
+            ...prev,
+            `{detailInfo:"${question.detailInfo}",questionSentence:"${
+              question.questionSentence
+            }",questionImg:[],choices:['${question.choices.join(
+              "','",
+            )}'],answerImg:[],answer:"${question.answer}",commentary:""},`,
+          ]
+        }, []),
+      )
+      // console.log('カスタマイズ開始:' + sentences)
       // let newPreview = []
+      // let turn = 'question'
       // let detailInfo = ''
       // let questionTxt = ''
+      // let choices = []
+      // let c = ''
       // let answer = ''
-      // let choices = ''
-      // let continueFlag = null
       // sentences.forEach((sentence, index) => {
-      //   if (continueFlag === 'question') {
-      //     if (setting.questionEnd && sentence.match(setting.questionEnd)) {
-      //     } else if (setting.customCheck.indexOf('choices') !== -1) {
+      //   while (sentence !== '') {
+      //     console.log('ループ処理開始：' + sentence)
+      //     if (turn === 'question') {
+      //       if (setting.questionStart) {
+      //         if (sentence.match(setting.questionStart)) {
+      //           console.log(`問題文開始:${index}`)
+      //           console.log(
+      //             'まとめる場所はここ？:' +
+      //               detailInfo +
+      //               ',questionTxt:' +
+      //               questionTxt +
+      //               'choices:' +
+      //               choices +
+      //               'answer:' +
+      //               answer,
+      //           )
+      //           detailInfo = sentence.match(setting.questionStart)[0]
+      //           if (setting.customCheck.indexOf('choices') !== -1) {
+      //             if (setting.choiceStart) {
+      //               if (sentence.match(setting.choiceStart)) {
+      //                 questionTxt += sentence
+      //                   .split(setting.questionStart)[1]
+      //                   .split(setting.choiceStart)[0]
+      //                 sentence = sentence.split(setting.choiceStart)[1]
+      //                 turn = 'choices'
+      //               } else {
+      //                 questionTxt += sentence.split(setting.questionStart)[1]
+      //                 sentence = ''
+      //               }
+      //             } else {
+      //               questionTxt += sentence.split(setting.questionStart)[1]
+      //               sentence = ''
+      //               turn = 'choices'
+      //             }
+      //           } else if (setting.customCheck.indexOf('answer') !== -1) {
+      //             if (setting.answerStart) {
+      //               if (sentence.match(setting.answerStart)) {
+      //                 questionTxt += sentence
+      //                   .split(setting.questionStart)[1]
+      //                   .split(setting.answerStart)[0]
+      //                 sentence = sentence.split(setting.answerStart)[1]
+      //                 turn = 'answer'
+      //               } else {
+      //                 questionTxt += sentence.split(setting.questionStart)[1]
+      //                 sentence = ''
+      //               }
+      //             } else {
+      //               questionTxt += sentence.split(setting.questionStart)[1]
+      //               sentence = ''
+      //               turn = 'answer'
+      //             }
+      //           } else {
+      //             questionTxt += sentence.split(setting.questionStart)[1]
+      //             if (sentence.split(setting.questionStart).length > 2) {
+      //               sentence = sentence.split(setting.questionStart)[2]
+      //               turn = 'question'
+      //             } else {
+      //               sentence = ''
+      //               turn = 'question'
+      //             }
+      //           }
+      //         }
+      //       }
+      //       // if OR else if??
+      //     } else if (turn === 'choices') {
       //       if (setting.choiceStart) {
       //         if (sentence.match(setting.choiceStart)) {
+      //           if (c) {
+      //             choices.push(c)
+      //             c = ''
+      //           }
+      //           if (sentence.split(setting.choiceStart).length > 2) {
+      //             c += sentence.split(setting.choiceStart)[1]
+      //             sentence = sentence.split(setting.choiceStart)[2]
+      //           } else if (setting.customCheck.indexOf('answer') !== -1) {
+      //             if (setting.answerStart) {
+      //               if (sentence.match(setting.answerStart)) {
+      //                 c += sentence
+      //                   .split(setting.choiceStart)[1]
+      //                   .split(setting.answerStart)[0]
+      //                 choices.push(c)
+      //                 c = ''
+      //                 sentence = sentence.split(setting.answerStart)[1]
+      //                 turn = 'answer'
+      //               } else {
+      //                 c += sentence.split(setting.choiceStart)[1]
+      //                 sentence = ''
+      //               }
+      //             } else {
+      //               // 文末で区切る
+      //               c += sentence.split(setting.choiceStart)[1]
+      //               choices.push(c)
+      //               c = ''
+      //             }
+      //           } else {
+      //             // next is questionSentence
+      //             if (setting.questionStart) {
+      //               if (sentence.match(setting.questionStart)) {
+      //                 c += sentence
+      //                   .split(setting.choiceStart)[1]
+      //                   .split(setting.questionStart)[0]
+      //                 choices.push(c)
+      //                 c = ''
+      //                 sentence = sentence.split(setting.questionStart)[1]
+      //                 turn = 'question'
+      //               } else {
+      //                 c += sentence.split(setting.choiceStart)[1]
+      //                 sentence = ''
+      //               }
+      //             }
+      //           }
       //         } else {
-      //           console.log('問題は次の行まで続きます')
+      //           if (setting.answerStart) {
+      //             if (sentence.match(setting.answerStart)) {
+      //               c += sentence.split(setting.answerStart)[0]
+      //               choices.push(c)
+      //               sentence = sentence.split(setting.answerStart)[1]
+      //               turn = 'answer'
+      //             } else {
+      //               c += sentence.toString()
+      //               sentence = ''
+      //             }
+      //           } else {
+      //             if (sentence.match(setting.questionStart)) {
+      //               c += sentence.split(setting.questionStart)[0]
+      //               choices.push(c)
+      //               sentence = sentence.split(setting.questionStart)[1]
+      //               turn = 'question'
+      //             } else {
+      //               c += sentence.toString()
+      //               sentence = ''
+      //             }
+      //           }
+      //         }
+      //       } else {
+      //         // if choiceStart === undefined,choice is splitted by sentence
+      //         if (setting.customCheck.indexOf('answer') !== -1) {
+      //           if (setting.answerStart) {
+      //             if (sentence.match(setting.answerStart)) {
+      //               c += sentence.split(setting.answerStart)[0]
+      //               choices.push(c)
+      //               c = ''
+      //               turn = 'answer'
+      //             } else {
+      //               c += sentence.toString()
+      //               choices.push(c)
+      //               c = ''
+      //             }
+      //           } else {
+      //             // choiceStartがなくてanswerStartもないことはあり得ない
+      //           }
+      //         } else {
+      //           if (setting.questionStart) {
+      //             if (sentence.match(setting.questionStart)) {
+      //               c += sentence.split(setting.questionStart)[0]
+      //               choices.push(c)
+      //               c = ''
+      //               turn = 'question'
+      //             } else {
+      //               c += sentence.toString()
+      //               choices.push(c)
+      //               c = ''
+      //             }
+      //           } else {
+      //             // choiceStartがなくてquestionStartもないことはあり得ない
+      //           }
       //         }
       //       }
-      //     } else if (setting.customCheck.indexOf('answer') !== -1) {
+      //     } else if (turn === 'answer') {
       //       if (setting.answerStart) {
-      //         if (sentence.match(setting.answerStart)) {
+      //         if (sentence.match(setting.questionStart)) {
+      //           answer += sentence
+      //             .split(setting.answerStart)[0]
+      //             .split(setting.questionStart)[0]
+      //           sentence = sentence.split(setting.questionStart)[1]
+      //           turn = 'question'
       //         } else {
-      //           console.log('問題は次の行まで続きます')
+      //           answer += sentence.toString()
+      //           sentence = ''
+      //         }
+      //       } else {
+      //         // 文頭からANSWERとして認識
+      //         if (setting.questionStart) {
+      //           if (sentence.match(setting.questionStart)) {
+      //             answer += sentence.split(setting.questionStart)[0]
+      //             sentence = sentence.split(setting.questionStart)[1]
+      //             turn = 'question'
+      //           } else {
+      //             answer += sentence.toString()
+      //             sentence = ''
+      //           }
       //         }
       //       }
-      //     } else {
-      //       console.log(index + '問題は次の行まで続きます')
       //     }
       //   }
-      //   if (setting.questionStart && sentence.match(setting.questionStart)) {
-      //     detailInfo = sentence
-      //       .match(setting.questionStart)
-      //       .replace(/\.|．/g, '')
-      //     if (setting.questionEnd && sentence.match(setting.questionEnd)) {
-      //       questionTxt += sentence
-      //         .split(setting.questionStart)[1]
-      //         .split(setting.questionEnd)[0]
-      //       sentence = sentence.split(setting.questionEnd)[1]
-      //     } else if (
-      //       setting.choiceStart &&
-      //       sentence.match(setting.choiceStart)
-      //     ) {
-      //       questionTxt += sentence
-      //         .split(setting.questionStart)[1]
-      //         .split(setting.choiceStart)[0]
-      //       sentence = sentence.split(setting.choiceStart)[1]
-      //     } else if (
-      //       setting.answerStart &&
-      //       sentence.match(setting.answerStart)
-      //     ) {
-      //       questionTxt += sentence
-      //         .split(setting.questionStart)[1]
-      //         .split(setting.answerStart)[0]
-      //       sentence = sentence.split(setting.answerStart)[1]
-      //     } else if (sentence.match(setting.questionStart).length > 1) {
-      //       console.log(index + ':2文以上の質問を検出しています')
-      //       questionTxt += sentence.split(setting.questionStart)[1]
-      //       sentence = sentence.split(setting.questionStart, 1)[1]
-      //       sentences.push(sentence)
-      //     } else {
-      //       console.log(index + ':問題は次の行まで続いています')
-      //       questionTxt += sentence.split(setting.questionStart)[1]
-      //       return
-      //     }
-      //   }
-      //   if (
-      //     setting.customCheck.indexOf('choices') !== -1 &&
-      //     setting.choiceStart &&
-      //     sentence.match(setting.choiceStart)
-      //   ) {
-      //     if (sentence.match(setting.choiceStart).length > 1) {
-      //     } else if (
-      //       setting.answerStart &&
-      //       sentence.match(setting.answerStart)
-      //     ) {
-      //     } else if (
-      //       setting.questionStart &&
-      //       sentence.match(setting.questionStart)
-      //     ) {
-      //     } else {
-      //       console.log(index + ':選択肢は次の行まで続きます')
-      //     }
-      //   } else if (
-      //     setting.customCheck.indexOf('choices') !== -1 &&
-      //     sentence.length > 0
-      //   ) {
-      //     if (setting.questionStart && sentence.match(setting.questionStart)) {
-      //     } else {
-      //       console.log(index + '行の終わりで選択肢を区切りました。')
-      //     }
-      //   }
-      //   if (
-      //     setting.customCheck.indexOf('answer') !== -1 &&
-      //     setting.answerStart &&
-      //     sentence.match(setting.answerStart)
-      //   ) {
-      //     if (setting.answerEnd && sentence.match(setting.answerEnd)) {
-      //     } else if (
-      //       setting.questionStart &&
-      //       sentence.match(setting.questionStart)
-      //     ) {
-      //     } else if (setting.answerEnd || setting.questionStart) {
-      //       console.log(index + ':解答は次の行まで続きます')
-      //     } else {
-      //       console.log(index + ':行の終わりで解答を区切りました')
-      //     }
-      //   } else if (
-      //     setting.customCheck.indexOf('answer') &&
-      //     sentence.length > 0
-      //   ) {
-      //   }
-      //   console.log('前の行からの続き:' + sentence)
       // })
     }
   }
